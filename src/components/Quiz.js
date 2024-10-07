@@ -11,6 +11,7 @@ const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [wrong, setWrong] = useState(0);
   const [finished, setFinished] = useState(false);
   const [remainingTime, setRemainingTime] = useState(60);
   const toast = useToast();
@@ -22,6 +23,7 @@ const Quiz = () => {
     const quizData = {
       currentQuestionIndex,
       score,
+      wrong,
       remainingTime,
       questions,
     };
@@ -33,9 +35,10 @@ const Quiz = () => {
     const username = localStorage.getItem('username');
     const savedProgress = localStorage.getItem(`quizProgress_${username}`);
     if (savedProgress) {
-      const { currentQuestionIndex, score, remainingTime, questions } = JSON.parse(savedProgress);
+      const { currentQuestionIndex, score, wrong, remainingTime, questions } = JSON.parse(savedProgress);
       setCurrentQuestionIndex(currentQuestionIndex);
       setScore(score);
+      setWrong(wrong);
       setRemainingTime(remainingTime);
       setQuestions(questions);
     } else {
@@ -51,7 +54,7 @@ const Quiz = () => {
     if (questions.length > 0) {
       saveQuizProgress();
     }
-  }, [currentQuestionIndex, score, remainingTime, questions]);
+  }, [currentQuestionIndex, score, wrong, remainingTime, questions]);
 
   const handleAnswer = (answer) => {
     if (answer === questions[currentQuestionIndex].correct_answer) {
@@ -65,6 +68,7 @@ const Quiz = () => {
         isClosable: true,
       });
     } else {
+      setWrong(wrong + 1);
       wrongSound.play();
       toast({
         title: "Wrong Answer!",
@@ -96,6 +100,7 @@ const Quiz = () => {
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setScore(0);
+    setWrong(0);
     setFinished(false);
     setRemainingTime(60);
     const username = localStorage.getItem('username');
@@ -111,7 +116,9 @@ const Quiz = () => {
     return (
       <QuizResult
         score={score}
+        wrong={wrong}
         totalQuestions={questions.length}
+        totalAnswared={currentQuestionIndex}
         onRestart={handleRestart}
         onBackToMenu={handleBackToMenu}
       />

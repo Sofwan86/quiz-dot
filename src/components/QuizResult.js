@@ -5,7 +5,7 @@ import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 const championSound = new Audio('/sounds/winner.mp3');
 const loserSound = new Audio('/sounds/loser.mp3');
 
-const QuizResult = ({ score, totalQuestions, onRestart, onBackToMenu }) => {
+const QuizResult = ({ score, wrong, totalQuestions, totalAnswared, onRestart, onBackToMenu }) => {
   useEffect(() => {
     if (score > 5) {
       championSound.play();
@@ -43,11 +43,15 @@ const QuizResult = ({ score, totalQuestions, onRestart, onBackToMenu }) => {
           <CheckIcon color="green.400" /> Correct Answers: {score}
         </Text>
         <Text fontSize="2xl" textAlign="center" marginTop={2}>
-          <CloseIcon color="red.400" /> Incorrect Answers: {totalQuestions - score}
+          <CloseIcon color="red.400" /> Incorrect Answers: {wrong}
+        </Text>
+        <Text fontSize="2xl" textAlign="center" marginTop={2}>
+          Total Answared: {totalAnswared + 1}
         </Text>
         <Text fontSize="2xl" textAlign="center" marginTop={2}>
           Total Questions: {totalQuestions}
         </Text>
+
 
         <Button 
           colorScheme="blue" 
