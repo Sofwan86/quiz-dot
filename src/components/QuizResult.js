@@ -46,7 +46,7 @@ const QuizResult = ({ score, wrong, totalQuestions, totalAnswared, onRestart, on
           <CloseIcon color="red.400" /> Incorrect Answers: {wrong}
         </Text>
         <Text fontSize="2xl" textAlign="center" marginTop={2}>
-          Total Answared: {totalAnswared + 1}
+          Total Answered: {totalAnswared + 1}
         </Text>
         <Text fontSize="2xl" textAlign="center" marginTop={2}>
           Total Questions: {totalQuestions}

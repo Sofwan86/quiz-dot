@@ -91,9 +91,9 @@ const Quiz = () => {
   };
 
   const finishGame = () => {
-    setFinished(true);
     const username = localStorage.getItem('username');
     localStorage.removeItem(`quizProgress_${username}`);
+    setFinished(true);
   };
 
   const handleRestart = () => {
@@ -109,6 +109,8 @@ const Quiz = () => {
   };
 
   const handleBackToMenu = () => {
+    const username = localStorage.getItem('username');
+    localStorage.removeItem(`quizProgress_${username}`);
     navigate('/start');
   };
 
