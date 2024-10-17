@@ -12,8 +12,9 @@ const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [wrong, setWrong] = useState(0);
+  const [answered, setAnswered] = useState(false); // New state to track if question is answered
   const [finished, setFinished] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(60);
+  const [remainingTime, setRemainingTime] = useState(500);
   const toast = useToast();
 
   const correctSound = new Audio('/sounds/correct-answer.mp3');
@@ -57,6 +58,10 @@ const Quiz = () => {
   }, [currentQuestionIndex, score, wrong, remainingTime, questions]);
 
   const handleAnswer = (answer) => {
+    if (answered) return; // Prevent multiple answers for the same question
+
+    setAnswered(true); // Mark the question as answered
+
     if (answer === questions[currentQuestionIndex].correct_answer) {
       setScore(score + 1);
       correctSound.play();
@@ -79,11 +84,15 @@ const Quiz = () => {
       });
     }
 
-    if (currentQuestionIndex + 1 < questions.length) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      finishGame();
-    }
+    // Allow moving to the next question after a delay
+    setTimeout(() => {
+      if (currentQuestionIndex + 1 < questions.length) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setAnswered(false); // Reset answered state for the next question
+      } else {
+        finishGame();
+      }
+    }, 2000);
   };
 
   const handleTimeUp = () => {
@@ -101,8 +110,9 @@ const Quiz = () => {
     setCurrentQuestionIndex(0);
     setScore(0);
     setWrong(0);
+    setAnswered(false); // Reset answered state when restarting
     setFinished(false);
-    setRemainingTime(60);
+    setRemainingTime(500);
     const username = localStorage.getItem('username');
     localStorage.removeItem(`quizProgress_${username}`);
     fetchQuestions().then(setQuestions);
@@ -168,6 +178,7 @@ const Quiz = () => {
                 variant="outline"
                 colorScheme="teal"
                 size="lg"
+                isDisabled={answered} // Disable buttons after answering
                 _hover={{ bg: 'teal.600', color: 'white' }}
                 _active={{ bg: 'teal.700' }}
               >
@@ -176,7 +187,12 @@ const Quiz = () => {
             ))}
           </Stack>
         </Box>
-        {/* Tampilkan soal ke-N dari total M soal */}
+        {/* Display the correct answer after answering */}
+        {answered && (
+          <Text fontSize="lg" color="yellow.500" fontWeight="bold">
+            Correct Answer: {currentQuestion.correct_answer}
+          </Text>
+        )}
         <Text fontSize="lg" color="white">
           {currentQuestionIndex + 1} / {questions.length}
         </Text>
